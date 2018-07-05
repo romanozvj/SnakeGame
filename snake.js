@@ -30,24 +30,24 @@ const refreshPage = function () {
     for (i = 0; i < 100; i++) {
         const element = document.getElementById(i.toString());
         const duration = Number(element.duration);
-        if (wrapper.containsapple === "false") {
+        if (document.getElementById("wrapper").containsapple === "false") {
             if (Math.random() * 100 < 2) {
-                wrapper.containsapple = "true";
-                element.hasApple = "true";
+                document.getElementById("wrapper").setAttribute("containsapple", "true");
+                document.getElementById(i.toString()).setAttribute("hasApple", "true");
             }
         }
         if (duration === "0") {
-            element.style["background-color"] = "rgba(196, 186, 186, 0.8)";
+            document.getElementById(i.toString()).style["background-color"] = "rgba(196, 186, 186, 0.8)";
         }
-        if (element.hasApple === "true") {
-            element.style["background-color"] = "rgba(221, 4, 4, 0.8)";
+        if (document.getElementById(i.toString()).hasApple === "true") {
+            document.getElementById(i.toString()).style["background-color"] = "rgba(221, 4, 4, 0.8)";
         }
         if (duration > 0) {
-            element.duration = (duration - 1).toString();
-            element.style["background-color"] = "rgba(15, 7, 7, 0.3)";
-            if (element.isLeader === "true") {
+            document.getElementById(i.toString()).setAttribute("duration", (duration - 1).toString());
+            document.getElementById(i.toString()).style["background-color"] = "rgba(15, 7, 7, 0.3)";
+            if (document.getElementById(i.toString()).isLeader === "true") {
                 let nextBlock;
-                switch (wrapper.direction) {
+                switch (document.getElementById("wrapper").direction) {
                     case "right":
                         nextBlock = i + 1;
                         break;
@@ -62,22 +62,22 @@ const refreshPage = function () {
                         break;
                 }
                 const nextElement = document.getElementById(nextBlock.toString());
-                if (nextElement.duration > 0) {
+                if (Number(nextElement.duration) > 0) {
                     alert("You lost!");
                 }
-                if (nextElement.hasApple) {
-                    wrapper.containsapple = "false";
-                    wrapper.snakelength++;
+                if (nextElement.hasApple === "true") {
+                    document.getElementById("wrapper").setAttribute("containsapple", "false");
+                    document.getElementById("wrapper").setAttribute("snakelength", (Number(document.getElementById("wrapper").snakelength) + 1));
                 }
-                element.isLeader = "false";
-                nextElement.isLeader = "true";
-                nextElement.duration = wrapper.snakelength;
+                document.getElementById(i.toString()).setAttribute("isLeader", "false");
+                document.getElementById(nextBlock.toString()).setAttribute("isLeader", "true");
+                document.getElementById(nextBlock.toString()).setAttribute("duration", document.getElementById("wrapper").snakelength);
             }
         }
     }
 }
 const thirdBlock = document.getElementById("55");
-document.getElementById("53").isLeader = "true";
+document.getElementById("53").setAttribute("isLeader", "true");
 const snakelengthNumber = Number(document.getElementById("wrapper").snakelength);
 document.getElementById("55").setAttribute("duration", snakelengthNumber.toString());
 document.getElementById("54").setAttribute("duration", (snakelengthNumber-1).toString());
