@@ -1,9 +1,8 @@
-const wrapper = document.getElementById("wrapper");
 for (let j = 0; j < 100; j++) {
     const newBlock = document.createElement("div");
     newBlock.classList.add("block");
     newBlock.setAttribute("id", j);
-    newBlock.textContent = "O";
+    newBlock.textContent = "";
     newBlock.setAttribute("isLeader", "false");
     newBlock.setAttribute("duration", "0");
     newBlock.setAttribute("hasApple", "false");
@@ -81,4 +80,5 @@ const snakelengthNumber = Number(document.getElementById("wrapper").snakelength)
 document.getElementById("55").setAttribute("duration", snakelengthNumber.toString());
 document.getElementById("54").setAttribute("duration", (snakelengthNumber-1).toString());
 document.getElementById("53").setAttribute("duration", (snakelengthNumber-2).toString());
+console.log(document.getElementById(53).duration);
 setInterval(refreshPage, 100);
