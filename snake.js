@@ -1,6 +1,5 @@
 const wrapper = document.getElementById("wrapper");
-let counter = 0;
-for (j = 0; j < 100; j++) {
+for (let j = 0; j < 100; j++) {
     const newBlock = document.createElement("div");
     newBlock.classList.add("block");
     newBlock.setAttribute("id", j);
@@ -27,7 +26,7 @@ document.onkeydown = function (e) {
     }
 }
 const refreshPage = function () {
-    for (i = 0; i < 100; i++) {
+    for (let i = 0; i < 100; i++) {
         const element = document.getElementById(i.toString());
         const duration = Number(element.duration);
         if (document.getElementById("wrapper").containsapple === "false") {
