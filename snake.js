@@ -1,91 +1,137 @@
 const wrapper = document.getElementById("wrapper");
-wrapper.setAttribute("snakelength", "3");
-wrapper.setAttribute("direction", "right");
-wrapper.setAttribute("containsapple", "false");
-for (let j = 1; j < 101; j++) {
+
+const directionEnum = Object.freeze({
+    left: 37,
+    up: 38,
+    right: 39,
+    down: 40
+})
+
+let state = {
+    timer: 100,
+    dimensions: 50,
+    snakelength: 3,
+    direction: directionEnum.right,
+    containsApple: 0
+}
+
+const originalState = Object.assign({}, state);
+
+let timer = state.timer;
+
+document.onkeydown = function (e) {
+    state.direction = e.keyCode;
+}
+
+function spawnApple() {
+    const coords = {
+        x: Math.floor(Math.random() * state.dimensions),
+        y: Math.floor(Math.random() * state.dimensions),
+    };
+    const id = coords.x + " " + coords.y;
+    const appleElement = document.getElementById(id);
+    appleElement.style["background-color"] = "rgba(221, 4, 4, 0.8)";
+    state.containsApple = 1;
+}
+
+function youLost() {
+    clearInterval();
+    alert('You lost! Your snake\'s length was: ' + state.snakelength);
+    state.snakelength = originalState.snakelength;
+    state.containsApple = 0;
+    state.direction = originalState.direction;
+    snake.head = originalSnake.head;
+    snake.body = originalSnake.body;
+    const arrayOfAllBlocks = Array.from(document.getElementsByClassName("block"));
+    arrayOfAllBlocks.forEach(function (e) {
+        e.style["background-color"] = "rgba(196, 186, 186, 1)"
+    })
+}
+for (let i = 0; i < (state.dimensions * state.dimensions); i++) {
+    const coords = {
+        x: i % state.dimensions,
+        y: Math.floor(i / state.dimensions)
+    }
     const newBlock = document.createElement("div");
+    const id = coords.x + " " + coords.y;
     newBlock.classList.add("block");
-    newBlock.setAttribute("id", j);
-    newBlock.setAttribute("isLeader", "false");
-    newBlock.setAttribute("duration", "0");
-    newBlock.setAttribute("hasApple", "false");
+    newBlock.setAttribute("id", id);
+    newBlock.setAttribute("x", coords.x);
+    newBlock.setAttribute("y", coords.y);
     wrapper.appendChild(newBlock);
 };
-document.onkeydown = function (e) {
-    switch (e.keyCode) {
-        case 37:
-            wrapper.setAttribute("direction", "left");
-            break;
-        case 38:
-            wrapper.setAttribute("direction", "up");
-            break;
-        case 39:
-            wrapper.setAttribute("direction", "right");
-            break;
-        case 40:
-            wrapper.setAttribute("direction", "down");
-            break;
-    }
+
+let snake = {
+    head: {
+        x: Math.floor(state.dimensions / 2),
+        y: Math.floor(state.dimensions / 2),
+        duration: state.snakelength
+    },
+    body: [
+        {
+            x: Math.floor(state.dimensions / 2) - 2,
+            y: Math.floor(state.dimensions / 2),
+            duration: state.snakelength - 2
+        },
+        {
+            x: Math.floor(state.dimensions / 2) - 1,
+            y: Math.floor(state.dimensions / 2),
+            duration: state.snakelength - 1
+        }
+    ]
 }
-const refreshPage = function () {
-    for (let i = 1; i < 101; i++) {
-        let nextBlock;
-        const element = document.getElementById(i);
-        const duration = element.getAttribute("duration");
-        if (wrapper.getAttribute("containsapple") == "false") {
-            if (Math.random() * 100 < 1) {
-                wrapper.setAttribute("containsapple", "true");
-                element.setAttribute("hasApple", "true");
-            }
-        }
-        if (duration == 0) {
-            element.style["background-color"] = "rgba(196, 186, 186, 0.8)";
-        }
-        if (element.getAttribute("hasApple") == "true") {
-            element.style["background-color"] = "rgba(221, 4, 4, 0.8)";
-        }
-        if (duration > 0) {
-            element.setAttribute("duration", ((Number(duration) - 1).toString()));
-            element.style["background-color"] = "rgb(0, 0, 0)";
-            if (element.getAttribute("isLeader") == "true") {
-                switch (wrapper.getAttribute("direction")) {
-                    case "right":
-                        nextBlock = i + 1;
-                        break;
-                    case "left":
-                        nextBlock = i - 1;
-                        break;
-                    case "up":
-                        nextBlock = i - 10;
-                        break;
-                    case "down":
-                        nextBlock = i + 10;
-                        break;
-                }
-                const nextElement = document.getElementById(nextBlock.toString());
-                if (Number(nextElement.getAttribute("duration")) > 0) {
-                    alert("You lost!");
-                }
-                if (nextElement.getAttribute("hasApple") == "true") {
-                    wrapper.setAttribute("containsapple", "false");
-                    wrapper.setAttribute("snakelength", (Number(wrapper.getAttribute("snakelength")) + 1));
-                    nextElement.setAttribute("hasApple", "false");
-                    console.log(wrapper.getAttribute("snakelength"));
-                }
-                element.setAttribute("isLeader", "false");
-                nextElement.setAttribute("isLeader", "true");
-                nextElement.setAttribute("duration", wrapper.getAttribute("snakelength"));
-            }
-        }
+
+const originalSnake = Object.assign({}, snake);
+
+const mainLoop = function () {
+    if (state.containsApple === 0) {
+        spawnApple();
     }
+    const nextSnakeCoords = {};
+    switch (state.direction) {
+        case directionEnum.right:
+            nextSnakeCoords.x = snake.head.x + 1;
+            nextSnakeCoords.y = snake.head.y;
+            break;
+        case directionEnum.down:
+            nextSnakeCoords.x = snake.head.x;
+            nextSnakeCoords.y = snake.head.y + 1;
+            break;
+        case directionEnum.left:
+            nextSnakeCoords.x = snake.head.x - 1;
+            nextSnakeCoords.y = snake.head.y;
+            break;
+        case directionEnum.up:
+            nextSnakeCoords.x = snake.head.x;
+            nextSnakeCoords.y = snake.head.y - 1;
+    }
+    if (nextSnakeCoords.x < 0 || nextSnakeCoords.x > (state.dimensions - 1) || nextSnakeCoords.y < 0 || nextSnakeCoords.y > (state.dimensions - 1)) {
+        youLost();
+    }
+    nextSnakeCoords.duration = state.snakelength;
+    snake.body.push(snake.head);
+    snake.head = nextSnakeCoords;
+    for (let i = 0; i < snake.body.length; i++) {
+        if (snake.body[i].duration < 2) {
+            removedCoords = snake.body.splice(i, 1)[0];
+            const id = removedCoords.x + " " + removedCoords.y;
+            const removedElement = document.getElementById(id);
+            removedElement.style["background-color"] = "rgba(196, 186, 186, 1)";
+        }
+        snake.body[i].duration--;
+    }
+
+    const nextId = snake.head.x + " " + snake.head.y;
+    const nextSnakeBlock = document.getElementById(nextId);
+    if (nextSnakeBlock.style["background-color"] === "rgb(0, 0, 0)") {
+        youLost();
+    }
+    if (nextSnakeBlock.style["background-color"] === "rgba(221, 4, 4, 0.8)") {
+        state.snakelength++;
+        state.containsApple = 0;
+    }
+    nextSnakeBlock.style["background-color"] = "rgb(0, 0, 0)";
+    timer = state.timer / (state.snakelength - 2);
+    console.log(timer);
 }
-const snakeHeadStart = document.getElementById("55");
-const snakeTailStart = document.getElementById("53");
-const snakeBodyStart = document.getElementById("54");
-snakeHeadStart.setAttribute("isLeader", "true");
-const snakelengthNumber = Number(wrapper.getAttribute("snakelength"));
-snakeHeadStart.setAttribute("duration", snakelengthNumber.toString());
-snakeBodyStart.setAttribute("duration", (snakelengthNumber-1).toString());
-console.log(wrapper.getAttribute("snakelength"));
-document.getElementById("53").setAttribute("duration", (snakelengthNumber-2).toString());
-setInterval(refreshPage, 100);
+setInterval(mainLoop, timer);

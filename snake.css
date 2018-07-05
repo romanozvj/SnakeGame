@@ -1,12 +1,9 @@
 .wrapper {
     display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    width: 150px;
-    height: 150px;
-    padding: 2px;
+    grid-template-columns: repeat(50, 1fr);
+    width: 350px;
+    height: 350px;
   }
   .block {
-    font-size: 10px;
     background-color: rgba(196, 186, 186, 1);
-    text-align: center;
   }
