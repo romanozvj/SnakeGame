@@ -1,51 +1,54 @@
-for (let j = 0; j < 100; j++) {
+const wrapper = document.getElementById("wrapper");
+wrapper.setAttribute("snakelength", "3");
+wrapper.setAttribute("direction", "right");
+wrapper.setAttribute("containsapple", "false");
+for (let j = 1; j < 101; j++) {
     const newBlock = document.createElement("div");
     newBlock.classList.add("block");
     newBlock.setAttribute("id", j);
-    newBlock.textContent = "";
     newBlock.setAttribute("isLeader", "false");
     newBlock.setAttribute("duration", "0");
     newBlock.setAttribute("hasApple", "false");
-    document.getElementById("wrapper").appendChild(newBlock);
+    wrapper.appendChild(newBlock);
 };
 document.onkeydown = function (e) {
     switch (e.keyCode) {
         case 37:
-            document.getElementById("wrapper").setAttribute("direction", "left");
+            wrapper.setAttribute("direction", "left");
             break;
         case 38:
-            document.getElementById("wrapper").setAttribute("direction", "up");
+            wrapper.setAttribute("direction", "up");
             break;
         case 39:
-            document.getElementById("wrapper").setAttribute("direction", "right");
+            wrapper.setAttribute("direction", "right");
             break;
         case 40:
-            document.getElementById("wrapper").setAttribute("direction", "down");
+            wrapper.setAttribute("direction", "down");
             break;
     }
 }
 const refreshPage = function () {
-    for (let i = 0; i < 100; i++) {
-        const element = document.getElementById(i.toString());
-        const duration = Number(element.duration);
-        if (document.getElementById("wrapper").containsapple === "false") {
-            if (Math.random() * 100 < 2) {
-                document.getElementById("wrapper").setAttribute("containsapple", "true");
-                document.getElementById(i.toString()).setAttribute("hasApple", "true");
+    for (let i = 1; i < 101; i++) {
+        let nextBlock;
+        const element = document.getElementById(i);
+        const duration = element.getAttribute("duration");
+        if (wrapper.getAttribute("containsapple") == "false") {
+            if (Math.random() * 100 < 1) {
+                wrapper.setAttribute("containsapple", "true");
+                element.setAttribute("hasApple", "true");
             }
         }
-        if (duration === "0") {
-            document.getElementById(i.toString()).style["background-color"] = "rgba(196, 186, 186, 0.8)";
+        if (duration == "0") {
+            element.style["background-color"] = "rgba(196, 186, 186, 0.8)";
         }
-        if (document.getElementById(i.toString()).hasApple === "true") {
-            document.getElementById(i.toString()).style["background-color"] = "rgba(221, 4, 4, 0.8)";
+        if (element.getAttribute("hasApple") == "true") {
+            element.style["background-color"] = "rgba(221, 4, 4, 0.8)";
         }
         if (duration > 0) {
-            document.getElementById(i.toString()).setAttribute("duration", (duration - 1).toString());
-            document.getElementById(i.toString()).style["background-color"] = "rgba(15, 7, 7, 0.3)";
-            if (document.getElementById(i.toString()).isLeader === "true") {
-                let nextBlock;
-                switch (document.getElementById("wrapper").direction) {
+            element.setAttribute("duration", ((Number(duration) - 1).toString()));
+            element.style["background-color"] = "rgb(0, 0, 0)";
+            if (element.getAttribute("isLeader") == "true") {
+                switch (wrapper.getAttribute("direction")) {
                     case "right":
                         nextBlock = i + 1;
                         break;
@@ -60,25 +63,28 @@ const refreshPage = function () {
                         break;
                 }
                 const nextElement = document.getElementById(nextBlock.toString());
-                if (Number(nextElement.duration) > 0) {
+                if (Number(nextElement.getAttribute("duration")) > 0) {
                     alert("You lost!");
                 }
-                if (nextElement.hasApple === "true") {
-                    document.getElementById("wrapper").setAttribute("containsapple", "false");
-                    document.getElementById("wrapper").setAttribute("snakelength", (Number(document.getElementById("wrapper").snakelength) + 1));
+                if (nextElement.getAttribute("hasApple") == "true") {
+                    wrapper.setAttribute("containsapple", "false");
+                    wrapper.setAttribute("snakelength", (Number(wrapper.getAttribute("snakelength")) + 1));
+                    console.log(wrapper.getAttribute("snakelength"));
                 }
-                document.getElementById(i.toString()).setAttribute("isLeader", "false");
-                document.getElementById(nextBlock.toString()).setAttribute("isLeader", "true");
-                document.getElementById(nextBlock.toString()).setAttribute("duration", document.getElementById("wrapper").snakelength);
+                element.setAttribute("isLeader", "false");
+                nextElement.setAttribute("isLeader", "true");
+                nextElement.setAttribute("duration", wrapper.getAttribute("snakelength"));
             }
         }
     }
 }
-const thirdBlock = document.getElementById("55");
-document.getElementById("53").setAttribute("isLeader", "true");
-const snakelengthNumber = Number(document.getElementById("wrapper").snakelength);
-document.getElementById("55").setAttribute("duration", snakelengthNumber.toString());
-document.getElementById("54").setAttribute("duration", (snakelengthNumber-1).toString());
+const snakeHeadStart = document.getElementById("55");
+const snakeTailStart = document.getElementById("53");
+const snakeBodyStart = document.getElementById("54");
+snakeHeadStart.setAttribute("isLeader", "true");
+const snakelengthNumber = Number(wrapper.getAttribute("snakelength"));
+snakeHeadStart.setAttribute("duration", snakelengthNumber.toString());
+snakeBodyStart.setAttribute("duration", (snakelengthNumber-1).toString());
+console.log(wrapper.getAttribute("snakelength"));
 document.getElementById("53").setAttribute("duration", (snakelengthNumber-2).toString());
-console.log(document.getElementById(53).duration);
 setInterval(refreshPage, 100);
