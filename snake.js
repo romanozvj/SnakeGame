@@ -38,7 +38,7 @@ const refreshPage = function () {
                 element.setAttribute("hasApple", "true");
             }
         }
-        if (duration == "0") {
+        if (duration == 0) {
             element.style["background-color"] = "rgba(196, 186, 186, 0.8)";
         }
         if (element.getAttribute("hasApple") == "true") {
@@ -62,6 +62,7 @@ const refreshPage = function () {
                         nextBlock = i + 10;
                         break;
                 }
+                console.log(nextBlock);
                 const nextElement = document.getElementById(nextBlock.toString());
                 if (Number(nextElement.getAttribute("duration")) > 0) {
                     alert("You lost!");
@@ -69,6 +70,7 @@ const refreshPage = function () {
                 if (nextElement.getAttribute("hasApple") == "true") {
                     wrapper.setAttribute("containsapple", "false");
                     wrapper.setAttribute("snakelength", (Number(wrapper.getAttribute("snakelength")) + 1));
+                    nextElement.setAttribute("hasApple", "false");
                     console.log(wrapper.getAttribute("snakelength"));
                 }
                 element.setAttribute("isLeader", "false");
