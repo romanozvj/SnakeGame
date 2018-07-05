@@ -62,7 +62,6 @@ const refreshPage = function () {
                         nextBlock = i + 10;
                         break;
                 }
-                console.log(nextBlock);
                 const nextElement = document.getElementById(nextBlock.toString());
                 if (Number(nextElement.getAttribute("duration")) > 0) {
                     alert("You lost!");
