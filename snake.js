@@ -8,7 +8,6 @@ for (j = 0; j < 100; j++) {
     newBlock.setAttribute("isLeader", "false");
     newBlock.setAttribute("duration", "0");
     newBlock.setAttribute("hasApple", "false");
-    console.log(newBlock);
     document.getElementById("wrapper").appendChild(newBlock);
 };
 document.onkeydown = function (e) {
@@ -26,7 +25,6 @@ document.onkeydown = function (e) {
             document.getElementById("wrapper").setAttribute("direction", "down");
             break;
     }
-    console.log(document.getElementById("wrapper").direction);
 }
 const refreshPage = function () {
     for (i = 0; i < 100; i++) {
@@ -78,13 +76,10 @@ const refreshPage = function () {
         }
     }
 }
-
-const firstBlock = document.getElementById("53");
-const secondBlock = document.getElementById("54");
 const thirdBlock = document.getElementById("55");
-thirdBlock.isLeader = "true";
-const snakelengthNumber = Number(wrapper.snakelength);
-thirdBlock.duration = snakelengthNumber.toString();
-secondBlock.duration = (snakelengthNumber - 1).toString();
-firstBlock.duration = (snakelengthNumber - 2).toString();
-setInterval(refreshPage(), 100);
+document.getElementById("53").isLeader = "true";
+const snakelengthNumber = Number(document.getElementById("wrapper").snakelength);
+document.getElementById("55").setAttribute("duration", snakelengthNumber.toString());
+document.getElementById("54").setAttribute("duration", (snakelengthNumber-1).toString());
+document.getElementById("53").setAttribute("duration", (snakelengthNumber-2).toString());
+setInterval(refreshPage, 100);
