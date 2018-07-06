@@ -1,5 +1,7 @@
 const wrapper = document.getElementById("wrapper");
 
+
+//Used for directions of the snake
 const directionEnum = Object.freeze({
     left: 37,
     up: 38,
@@ -7,6 +9,7 @@ const directionEnum = Object.freeze({
     down: 40
 })
 
+//State of the game, the meta information of the game
 let state = {
     timer: 100,
     dimensions: 50,
@@ -15,10 +18,13 @@ let state = {
     containsApple: 0
 }
 
+//Used to reset the game upon death
 const originalState = Object.assign({}, state);
 
+//timer variable for use in speeding up the game
 let timer = state.timer;
 
+//Detecting arrow keys, switching state.direction accordingly
 document.onkeydown = function (e) {
     console.log(state.direction);
     switch (e.keyCode) {
@@ -48,6 +54,7 @@ document.onkeydown = function (e) {
     }
 }
 
+//Function for spawning apples to be called in every cycle of the main loop only when there are no apples on screen already
 function spawnApple() {
     const coords = {
         x: Math.floor(Math.random() * state.dimensions),
@@ -59,6 +66,7 @@ function spawnApple() {
     state.containsApple = 1;
 }
 
+//Lose function
 function youLost() {
     clearInterval();
     alert('You lost! Your snake\'s length was: ' + state.snakelength);
@@ -72,6 +80,8 @@ function youLost() {
         e.style["background-color"] = "rgba(196, 186, 186, 1)"
     })
 }
+
+//The initial creation of the map according to the dimensions setting
 for (let i = 0; i < (state.dimensions * state.dimensions); i++) {
     const coords = {
         x: i % state.dimensions,
@@ -86,6 +96,7 @@ for (let i = 0; i < (state.dimensions * state.dimensions); i++) {
     wrapper.appendChild(newBlock);
 };
 
+//Putting the initial snake somewhere in the middle
 let snake = {
     head: {
         x: Math.floor(state.dimensions / 2),
@@ -106,12 +117,17 @@ let snake = {
     ]
 }
 
+
 const originalSnake = Object.assign({}, snake);
 
 const mainLoop = function () {
+
+    //Spawns apple if there are no apples already
     if (state.containsApple === 0) {
         spawnApple();
     }
+
+    //Coordinates of next snake block acccording to location of current snake head and the direction in which it is going
     const nextSnakeCoords = {};
     switch (state.direction) {
         case directionEnum.right:
@@ -130,12 +146,23 @@ const mainLoop = function () {
             nextSnakeCoords.x = snake.head.x;
             nextSnakeCoords.y = snake.head.y - 1;
     }
+
+    //If you run off screen to nonexistant coordinates you die
     if (nextSnakeCoords.x < 0 || nextSnakeCoords.x > (state.dimensions - 1) || nextSnakeCoords.y < 0 || nextSnakeCoords.y > (state.dimensions - 1)) {
         youLost();
     }
+
+    //Snake length works by duration, the longer the duration of each block, the bigger the trail of snake.
+    //Duration is counted in number of times the game has looped
     nextSnakeCoords.duration = state.snakelength;
+
+    //Head becomes body
     snake.body.push(snake.head);
+
+    //New snake block becomes head
     snake.head = nextSnakeCoords;
+
+    //Removing the tail blocks with duration of 0 - the last tail block each cycle in normal gameplay
     for (let i = 0; i < snake.body.length; i++) {
         if (snake.body[i].duration < 2) {
             removedCoords = snake.body.splice(i, 1)[0];
@@ -146,17 +173,25 @@ const mainLoop = function () {
         snake.body[i].duration--;
     }
 
+    //Getting DOM element of new snake block
     const nextId = snake.head.x + " " + snake.head.y;
     const nextSnakeBlock = document.getElementById(nextId);
+
+    //If the snake (black color) hits itself, it dies
     if (nextSnakeBlock.style["background-color"] === "rgb(0, 0, 0)") {
         youLost();
     }
+
+    //If it picks up a red block, snake length increases
     if (nextSnakeBlock.style["background-color"] === "rgba(221, 4, 4, 0.8)") {
         state.snakelength++;
         state.containsApple = 0;
     }
+
+    //make next snake block black, speed up game
     nextSnakeBlock.style["background-color"] = "rgb(0, 0, 0)";
     timer = state.timer / (state.snakelength - 2);
-    console.log(timer);
 }
+
+//main loop
 setInterval(mainLoop, timer);
