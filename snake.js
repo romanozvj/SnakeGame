@@ -20,7 +20,32 @@ const originalState = Object.assign({}, state);
 let timer = state.timer;
 
 document.onkeydown = function (e) {
-    state.direction = e.keyCode;
+    console.log(state.direction);
+    switch (e.keyCode) {
+        case directionEnum.right:
+            if (state.direction != directionEnum.left) {
+                state.direction = e.keyCode;
+            }
+            break;
+        case directionEnum.left:
+            if (state.direction != directionEnum.right) {
+
+                state.direction = e.keyCode;
+            }
+            break;
+        case directionEnum.up:
+            if (state.direction != directionEnum.down) {
+
+                state.direction = e.keyCode;
+            }
+            break;
+        case directionEnum.down:
+            if (state.direction != directionEnum.up) {
+
+                state.direction = e.keyCode;
+            }
+            break;
+    }
 }
 
 function spawnApple() {
