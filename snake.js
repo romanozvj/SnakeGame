@@ -12,6 +12,7 @@ const directionEnum = Object.freeze({
 //State of the game, the meta information of the game
 let state = {
     timer: 100,
+    directionTemp: directionEnum.right,
     dimensions: 50,
     snakelength: 3,
     direction: directionEnum.right,
@@ -30,25 +31,25 @@ document.onkeydown = function (e) {
     switch (e.keyCode) {
         case directionEnum.right:
             if (state.direction != directionEnum.left) {
-                state.direction = e.keyCode;
+                state.directionTemp = e.keyCode;
             }
             break;
         case directionEnum.left:
             if (state.direction != directionEnum.right) {
 
-                state.direction = e.keyCode;
+                state.directionTemp = e.keyCode;
             }
             break;
         case directionEnum.up:
             if (state.direction != directionEnum.down) {
 
-                state.direction = e.keyCode;
+                state.directionTemp = e.keyCode;
             }
             break;
         case directionEnum.down:
             if (state.direction != directionEnum.up) {
 
-                state.direction = e.keyCode;
+                state.directionTemp = e.keyCode;
             }
             break;
     }
@@ -62,8 +63,13 @@ function spawnApple() {
     };
     const id = coords.x + " " + coords.y;
     const appleElement = document.getElementById(id);
-    appleElement.style["background-color"] = "rgba(221, 4, 4, 0.8)";
-    state.containsApple = 1;
+    if (appleElement.style["background-color"] === "rgb(0, 0, 0)") {
+        spawnApple();
+    }
+    else {
+        appleElement.style["background-color"] = "rgba(221, 4, 4, 0.8)";
+        state.containsApple = 1;
+    }
 }
 
 //Lose function
@@ -121,7 +127,7 @@ let snake = {
 const originalSnake = Object.assign({}, snake);
 
 const mainLoop = function () {
-
+    state.direction = state.directionTemp;
     //Spawns apple if there are no apples already
     if (state.containsApple === 0) {
         spawnApple();
