@@ -74,7 +74,6 @@ function spawnApple() {
 
 //Lose function
 function youLost() {
-    clearInterval();
     alert('You lost! Your snake\'s length was: ' + state.snakelength);
     state.snakelength = originalState.snakelength;
     state.containsApple = 0;
@@ -156,6 +155,7 @@ const mainLoop = function () {
     //If you run off screen to nonexistant coordinates you die
     if (nextSnakeCoords.x < 0 || nextSnakeCoords.x > (state.dimensions - 1) || nextSnakeCoords.y < 0 || nextSnakeCoords.y > (state.dimensions - 1)) {
         youLost();
+		return;
     }
 
     //Snake length works by duration, the longer the duration of each block, the bigger the trail of snake.
@@ -186,6 +186,7 @@ const mainLoop = function () {
     //If the snake (black color) hits itself, it dies
     if (nextSnakeBlock.style["background-color"] === "rgb(0, 0, 0)") {
         youLost();
+		return;
     }
 
     //If it picks up a red block, snake length increases
