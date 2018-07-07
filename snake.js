@@ -9,6 +9,12 @@ const directionEnum = Object.freeze({
     down: 40
 })
 
+const blockColorEnum = Object.freeze({
+    snake: "rgb(0, 0, 0)",
+    apple: "rgba(221, 4, 4, 0.8)",
+    background: "rgba(196, 186, 186, 1)"
+})
+
 //State of the game, the meta information of the game
 let state = {
     timer: 100,
@@ -63,11 +69,11 @@ function spawnApple() {
     };
     const id = coords.x + " " + coords.y;
     const appleElement = document.getElementById(id);
-    if (appleElement.style["background-color"] === "rgb(0, 0, 0)") {
+    if (appleElement.style["background-color"] === blockColorEnum.snake) {
         spawnApple();
     }
     else {
-        appleElement.style["background-color"] = "rgba(221, 4, 4, 0.8)";
+        appleElement.style["background-color"] = blockColorEnum.apple;
         state.containsApple = 1;
     }
 }
@@ -75,31 +81,32 @@ function spawnApple() {
 //Lose function
 function youLost() {
     alert('You lost! Your snake\'s length was: ' + state.snakelength);
-    state.snakelength = originalState.snakelength;
-    state.containsApple = 0;
-    state.direction = originalState.direction;
+    state = Object.assign({}, originalState);
     snake.head = originalSnake.head;
     snake.body = originalSnake.body;
     const arrayOfAllBlocks = Array.from(document.getElementsByClassName("block"));
     arrayOfAllBlocks.forEach(function (e) {
-        e.style["background-color"] = "rgba(196, 186, 186, 1)"
+        e.style["background-color"] = blockColorEnum.background;
     })
 }
 
 //The initial creation of the map according to the dimensions setting
-for (let i = 0; i < (state.dimensions * state.dimensions); i++) {
-    const coords = {
-        x: i % state.dimensions,
-        y: Math.floor(i / state.dimensions)
-    }
-    const newBlock = document.createElement("div");
-    const id = coords.x + " " + coords.y;
-    newBlock.classList.add("block");
-    newBlock.setAttribute("id", id);
-    newBlock.setAttribute("x", coords.x);
-    newBlock.setAttribute("y", coords.y);
-    wrapper.appendChild(newBlock);
-};
+function init() {
+    for (let i = 0; i < (state.dimensions * state.dimensions); i++) {
+        const coords = {
+            x: i % state.dimensions,
+            y: Math.floor(i / state.dimensions)
+        }
+        const newBlock = document.createElement("div");
+        const id = coords.x + " " + coords.y;
+        newBlock.style["background-color"] = blockColorEnum.background;
+        newBlock.className = "block";
+        newBlock.setAttribute("id", id);
+        newBlock.setAttribute("x", coords.x);
+        newBlock.setAttribute("y", coords.y);
+        wrapper.appendChild(newBlock);
+    };
+}
 
 //Putting the initial snake somewhere in the middle
 let snake = {
@@ -155,7 +162,7 @@ const mainLoop = function () {
     //If you run off screen to nonexistant coordinates you die
     if (nextSnakeCoords.x < 0 || nextSnakeCoords.x > (state.dimensions - 1) || nextSnakeCoords.y < 0 || nextSnakeCoords.y > (state.dimensions - 1)) {
         youLost();
-		return;
+        return;
     }
 
     //Snake length works by duration, the longer the duration of each block, the bigger the trail of snake.
@@ -174,7 +181,7 @@ const mainLoop = function () {
             removedCoords = snake.body.splice(i, 1)[0];
             const id = removedCoords.x + " " + removedCoords.y;
             const removedElement = document.getElementById(id);
-            removedElement.style["background-color"] = "rgba(196, 186, 186, 1)";
+            removedElement.style["background-color"] = blockColorEnum.background;
         }
         snake.body[i].duration--;
     }
@@ -184,21 +191,25 @@ const mainLoop = function () {
     const nextSnakeBlock = document.getElementById(nextId);
 
     //If the snake (black color) hits itself, it dies
-    if (nextSnakeBlock.style["background-color"] === "rgb(0, 0, 0)") {
+    if (nextSnakeBlock.style["background-color"] === blockColorEnum.snake) {
         youLost();
-		return;
     }
 
     //If it picks up a red block, snake length increases
-    if (nextSnakeBlock.style["background-color"] === "rgba(221, 4, 4, 0.8)") {
+    if (nextSnakeBlock.style["background-color"] === blockColorEnum.apple) {
         state.snakelength++;
         state.containsApple = 0;
+        state.timer = state.timer * 0.99;
     }
 
-    //make next snake block black, speed up game
-    nextSnakeBlock.style["background-color"] = "rgb(0, 0, 0)";
-    timer = state.timer / (state.snakelength - 2);
+    //make next block a snake
+    nextSnakeBlock.style["background-color"] = blockColorEnum.snake;
+    clearInterval(intervalId);
+    intervalId = setInterval(mainLoop, state.timer);
 }
 
+let intervalId;
+
+init();
 //main loop
-setInterval(mainLoop, timer);
+intervalId = setInterval(mainLoop, state.timer);
