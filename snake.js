@@ -11,8 +11,8 @@ const directionEnum = Object.freeze({
 
 const blockColorEnum = Object.freeze({
     snake: "rgb(0, 0, 0)",
-    apple: "rgba(221, 4, 4, 0.8)",
-    background: "rgba(196, 186, 186, 1)"
+    apple: "rgb(221, 4, 4)",
+    background: "rgb(196, 186, 186)"
 })
 
 //State of the game, the meta information of the game
@@ -33,7 +33,6 @@ let timer = state.timer;
 
 //Detecting arrow keys, switching state.direction accordingly
 document.onkeydown = function (e) {
-    console.log(state.direction);
     switch (e.keyCode) {
         case directionEnum.right:
             if (state.direction != directionEnum.left) {

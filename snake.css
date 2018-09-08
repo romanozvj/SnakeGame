@@ -1,9 +1,24 @@
+.middle {
+	position: absolute;
+	top: 0; bottom: 0; right: 0; left: 0;
+	margin: auto;
+	width: 400px;
+	height: 400px;
+}
 .wrapper {
-    display: grid;
-    grid-template-columns: repeat(50, 1fr);
-    width: 350px;
-    height: 350px;
-  }
-  .block {
-    background-color: rgba(196, 186, 186, 1);
-  }
+	display: grid;
+	grid-template-columns: repeat(50, 1fr);
+	width: 350px;
+	height: 350px;
+	box-shadow: 0 0 5px black;
+}
+.block {
+	background-color: rgba(196, 186, 186, 1);
+}
+
+.title {
+	color: rgb(221, 4, 4);
+	font-family: Arial;
+	display: inline;
+	font-size: 20px;
+}
